@@ -7931,6 +7931,7 @@ button.bg-dark:focus {
 .mb-0,
 .my-0 {
   margin-bottom: 0 !important;
+  color: #dc3545;
 }
 
 .ml-0,
@@ -9845,7 +9846,7 @@ button.bg-dark:focus {
 }
 
 .text-white {
-  color: #fff !important;
+  color: #dc3545 !important;
 }
 
 .text-primary {

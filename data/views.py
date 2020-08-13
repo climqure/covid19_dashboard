@@ -1,11 +1,13 @@
-import datetime
-import requests
-from django.shortcuts import render
+from datetime import datetime
 from django.conf import settings
+from django.db import models
 from django.http import HttpResponse
+from django.shortcuts import render
 from .models import Info, active_countrie, all_countrie
 import json
 import os
+import requests
+
 
 
 def index(request):
@@ -13,43 +15,76 @@ def index(request):
 
 
 def update(request):
-    url = 'https://dashboards-dev.sprinklr.com/data/9043/global-covid19-who-gis.json'
-    json_data = requests.get(url).json()
+    json_data = requests.get('https://covid19.who.int/page-data/index/page-data.json').json()
+    counter1, counter2 = 0,0
 
-    entry = []
-    counter1 = 0
-    counter2 = 0
-    counter3 = 0
+    for record in json_data["result"]["pageContext"]["rawDataSets"]["dayGroups"]:
+        a = datetime.strptime(record["value"][0:10], '%Y-%m-%d').strftime('%Y-%m-%d')
+        for deeprecord in record["data"]["rows"]:
+            b = str(deeprecord[0])
+            c = str(deeprecord[1])
+            d = int(deeprecord[2])
+            e = int(deeprecord[3])
+            f = int(deeprecord[7])
+            g = int(deeprecord[8])
+            
+            if b != 'PS' and b != ' ':
+                name = str(all_countrie.objects.get(coun_abr=b).coun)
+                record_data = Info(day=a, country_abr=b, country=name, region=c,
+                                deaths=d, cum_deaths=e, confirmed=f, cum_confirmed=g)
+                record_country = active_countrie(country_abr=b, country=name)
 
-    for row in json_data['rows']:
-        a_time = row[0]
-        a = datetime.datetime.fromtimestamp(a_time/1000)
-        a = datetime.datetime.strftime(a, '%Y-%m-%d')
-        b = str(row[1])
-        c = str(row[2])
-        d = int(row[3])
-        e = int(row[4])
-        f = int(row[5])
-        g = int(row[6])
+                if not Info.objects.filter(day=a, country_abr=b, country=name, region=c, deaths=d, cum_deaths=e, confirmed=f, cum_confirmed=g).exists():
+                    record_data.save()
+                    counter1 += 1
 
-        check_country = all_countrie.objects.get(coun_abr=b)
-        coun_name = check_country.coun
+                if not active_countrie.objects.filter(country_abr=b, country=name).exists():
+                    record_country.save()
+                    counter2 += 1
 
-        record_data = Info(day=a, country_abr=b, country=coun_name, region=c,
-                           deaths=d, cum_deaths=e, confirmed=f, cum_confirmed=g)
+    return HttpResponse(str(counter1) + ' data added to list' + str(counter2) + ' countries added')            
+    
 
-        record_country = active_countrie(country_abr=b, country=coun_name)
 
-        if not Info.objects.filter(day=a, country_abr=b, country=coun_name, region=c, deaths=d, cum_deaths=e, confirmed=f, cum_confirmed=g).exists():
-            record_data.save()
-            counter1 += 1
+    # =========================================old json data format ==============================
+    # url = 'https://dashboards-dev.sprinklr.com/data/9043/global-covid19-who-gis.json'
+    # json_data = requests.get(url).json()
 
-        if not active_countrie.objects.filter(country_abr=b, country=coun_name).exists:
-            record_country.save()
-            counter2 += 1
+    # counter1 = 0
+    # counter2 = 0
 
-    return HttpResponse(str(counter1) + 'data added and ' + str(counter2) + ' countries added')
-    # == == == == == == == == == == == == == == == == == == == == == == == == == == == == == = opening local csv file == == == == == == == == == == == == == ==
+    # for row in json_data['rows']:
+    #     a_time = row[0]
+    #     a = datetime.datetime.fromtimestamp(a_time/1000)
+    #     a = datetime.datetime.strftime(a, '%Y-%m-%d')
+    #     b = str(row[1])
+    #     c = str(row[2])
+    #     d = int(row[3])
+    #     e = int(row[4])
+    #     f = int(row[5])
+    #     g = int(row[6])
+
+
+    #     check_country = all_countrie.objects.get(coun_abr=b)
+    #     coun_name = check_country.coun
+    #     record_data = Info(day=a, country_abr=b, country=coun_name, region=c,
+    #                        deaths=d, cum_deaths=e, confirmed=f, cum_confirmed=g)
+    #     record_country = active_countrie(country_abr=b, country=coun_name)
+        
+    #     if not Info.objects.filter(day=a, country_abr=b, country=coun_name, region=c, deaths=d, cum_deaths=e, confirmed=f, cum_confirmed=g).exists():
+    #         # if b != 'PS':
+    #             record_data.save()
+    #             counter1 += 1
+    #     if not active_countrie.objects.filter(country_abr=b, country=coun_name).exists:
+    #         # if b != 'PS':
+    #             record_country.save()
+    #             counter2 += 1
+
+    # return HttpResponse(str(counter1) + 'data added and ' + str(counter2) + ' countries added')
+
+
+
+    # == == == == == == == == == == == == == == == ==Alt method by opening local csv file == == == == == == == == == == == == == ==
     # file = open('/home/mohit/Desktop/cov/data/cov_data.csv',
     #             newline='', encoding='utf-8-sig')
 
@@ -86,8 +121,10 @@ def update(request):
     # == == == == == == == == == == == == == == == == == == == == == == = end local csv file == == == == == == == == == == == == == == == == == == == == == == == == == == == == == =
 
 
-def numbers(request, slug):
-    return render(request, 'data/index.html')
+def detail_view(request, slug):
+    country = active_countrie.objects.get(country_abr = slug)
+    obj = Info.objects.filter(country_abr = country.country_abr).latest('day')
+    return render(request, 'mysite/index2.html', {'country':obj})
 
 
 def upload_countries(request):

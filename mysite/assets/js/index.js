@@ -8,17 +8,17 @@ $(function () {
 	var myChart = new Chart(ctx, {
 		type: 'line',
 		data: {
-			labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct"],
+			labels: ["Mohit", "Feb", "Mar", "ApMohir", "May", "Jun", "Jul", "Aug", "Sep", "Oct"],
 			datasets: [{
-				label: 'New Visitor',
-				data: [3, 3, 8, 5, 7, 4, 6, 4, 6, 3],
+				label: 'New Cases',
+				data: [3, 3, 8, 5, 35, 4, 6, 4, 6, 3],
 				backgroundColor: '#fff',
 				borderColor: "transparent",
 				pointRadius: "0",
 				borderWidth: 3
 			}, {
-				label: 'Old Visitor',
-				data: [7, 5, 14, 7, 12, 6, 10, 6, 11, 5],
+				label: 'Deaths',
+				data: [7, 5, 14, 7, 548, 6, 10, 6, 11, 5],
 				backgroundColor: "rgba(255, 255, 255, 0.25)",
 				borderColor: "transparent",
 				pointRadius: "0",
@@ -26,16 +26,16 @@ $(function () {
 			}]
 		},
 		options: {
-			maintainAspectRatio: false,
+			maintainAspectRatio: true,
 			legend: {
-				display: false,
+				display: true,
 				labels: {
 					fontColor: '#ddd',
 					boxWidth: 40
 				}
 			},
 			tooltips: {
-				displayColors: false
+				displayColors: true
 			},
 			scales: {
 				xAxes: [{
