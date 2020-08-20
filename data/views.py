@@ -4,6 +4,7 @@ from django.db import models
 from django.http import HttpResponse
 from django.shortcuts import render
 from .models import Info, active_countrie, all_countrie
+from django.core.exceptions import ObjectDoesNotExist
 import json
 import os
 import requests
@@ -122,9 +123,23 @@ def update(request):
 
 
 def detail_view(request, slug):
-    country = active_countrie.objects.get(country_abr = slug)
-    obj = Info.objects.filter(country_abr = country.country_abr).latest('day')
-    return render(request, 'mysite/index2.html', {'country':obj})
+    try:
+        country = active_countrie.objects.get(country_abr = slug)
+        allCountry = active_countrie.objects.all().order_by('country')
+        obj = Info.objects.filter(country_abr = country.country_abr).latest('day')
+        datacab = Info.objects.filter(country_abr=slug)
+        list1, list2, list3, list4, list5 = [], [], [], [], []
+        for value in datacab:
+            list1.append(value.day)
+            list2.append(abs(value.deaths))
+            list3.append(abs(value.confirmed))
+            list4.append(abs(value.cum_confirmed))
+            list5.append(abs(value.cum_deaths))
+        
+        return render(request, 'mysite/index2.html', {'country':obj, 'day':list1, 'deaths':list2, 'confirmed':list3, 'cum_confirmed':list4, 'cum_deaths':list5, 'allCountry':allCountry})
+
+    except active_countrie.DoesNotExist:
+        return render(request, 'mysite/404.html')
 
 
 def upload_countries(request):

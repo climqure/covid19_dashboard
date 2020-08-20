@@ -22,3 +22,6 @@ urlpatterns = [
     path('about/', include('about.urls'), name='about'),
     path('data/', include('data.urls'), name='data'),
 ]
+
+handler404 = 'homepage.views.handler404'
+handler505 = 'homepage.views.handler500'

@@ -86,33 +86,53 @@
                         </a>
                     </li>
                     <li class="nav-item">
+
                         <form class="search-bar">
-                            <input type="text" class="form-control" placeholder="Search Countries">
-                        <ul class="dropdown-menu dropdown-menu-right">
-                            <li class="dropdown-item"> <i class="flag-icon flag-icon-gb mr-2"></i> English</li>
-                            <li class="dropdown-item"> <i class="flag-icon flag-icon-fr mr-2"></i> French</li>
-                            <li class="dropdown-item"> <i class="flag-icon flag-icon-cn mr-2"></i> Chinese</li>
-                            <li class="dropdown-item"> <i class="flag-icon flag-icon-de mr-2"></i> German</li>
-                        </ul>                            <a href="javascript:void();"><i class="icon-magnifier"></i></a>
+                        <a class="nav-link dropdown-toggle dropdown-toggle-nocaret waves-effect" data-toggle="dropdown" href="javascript:void(); style="overflow:auto;">
+                            <input type="text" class="form-control" id = "myInput" onkeyup="myFunction()" placeholder=" &#128269;     Search Countries"></a>
+                            <ul class="dropdown-menu" style="overflow:hidden; overflow-y: scroll; max-height:425px; background-color: rgba(10, 10, 10, 0.95); width: 525px; margin-left: 10px">
+                                {% for value in allCountry %}
+                                <li class="dropdown-divider"></li>
+                                <li class="dropdown-item"><a href="/data/{{ value.country_abr }}/"> <img src="{% static 'flags/1x1/' %}{{ value.country_abr }}.svg" style="width:20px; margin-right:1em;"></img> {{ value.country }} ({{ value.country_abr }}) </a></li>
+                                {% endfor %}
+                                <li class="dropdown-divider"></li>
+                            </ul>
                         </form>
                     </li>
                 </ul>
-
+<script>
+function myFunction() {
+    var input, filter, ul, li, a, i, txtValue;
+    input = document.getElementById("myInput");
+    filter = input.value.toUpperCase();
+    ul = document.getElementById("dropdown-menu");
+    li = ul.getElementsByTagName("dropdown-item");
+    for (i = 0; i < li.length; i++) {
+        a = li[i].getElementsByTagName("a")[0];
+        txtValue = a.textContent || a.innerText;
+        if (txtValue.toUpperCase().indexOf(filter) > -1) {
+            li[i].style.display = "";
+        } else {
+            li[i].style.display = "none";
+        }
+    }
+}
+</script>
                  <ul class="navbar-nav align-items-center right-nav-link">
                     <li class="nav-item dropdown-lg">
                         <a class="nav-link dropdown-toggle dropdown-toggle-nocaret waves-effect" data-toggle="dropdown"
-                            href="javascript:void();"> {{ country.country }}  | 
-                            <img src = "{% static 'flags/1x1/' %}{{ country.country_abr }}.svg"; width="25" height= "25"></img></a>
+                            href="javascript:void();">  
+                            <img src = "{% static 'flags/1x1/' %}{{ country.country_abr }}.svg"; width="25" height= "25"style="margin-right:1em;"></img>  {{ country.country }} | ({{ country.country_abr}})</a>
                     </li>
                  </ul>
 
-                 <ul class="navbar-nav align-items-center right-nav-link">
+                 {% comment %} <ul class="navbar-nav align-items-center right-nav-link">
                     <li class="nav-item dropdown-lg">
                         <a class="nav-link dropdown-toggle dropdown-toggle-nocaret waves-effect" data-toggle="dropdown"
                             href="javascript:void();"> Last updated: {{ country.day }} 
                             </a>
                     </li>
-                 </ul>
+                 </ul> {% endcomment %}
                 </li>
             </ul>
             </nav>
@@ -130,44 +150,27 @@
                     <div class="card-content">
                         <div class="row row-group m-0">
                             <div class="col-12 col-lg-6 col-xl-3 border-light">
-                                <div class="card-body">
-                                    <h5 class="text-white mb-0">{{ country.confirmed | intcomma }} <span class="float-right"><i></i></span></h5>
-                                    <div class="progress my-3" style="height:3px;">
-                                        <div class="progress-bar" style="width:55%"></div>
-                                    </div>
-                                    <p class="mb-0 text-white small-font">New cases today <span
-                                            class="float-right">+4.2%
-                                            <i class="zmdi zmdi-long-arrow-up"></i></span></p>
+                                <div class="card-body"> 
+                                    <p class="mb-0 text-white small-font" style="color:#efbb00">New cases today </p>
+                                    <h5 style="color:#efbb00">{{ country.confirmed | intcomma }} </h5>
                                 </div>
                             </div>
-                            <div class="col-12 col-lg-6 col-xl-3 border-light">
-                                <div class="card-body">
-                                    <h5 class="text-white mb-0">{{ country.deaths | intcomma }} <span class="float-right"><i></i></span></h5>
-                                    <div class="progress my-3" style="height:3px;">
-                                        <div class="progress-bar" style="width:55%"></div>
-                                    </div>
-                                    <p class="mb-0 text-white small-font">Deceased today <span class="float-right">+1.2%
-                                            <i class="zmdi zmdi-long-arrow-up"></i></span></p>
+                           <div class="col-12 col-lg-6 col-xl-3 border-light">
+                                <div class="card-body"> 
+                                    <p class="mb-0 text-white small-font">Total existing cases</p>
+                                    <h5 style="color:#16A1F7">{{ country.cum_confirmed | intcomma }} </h5>
                                 </div>
                             </div>
-                            <div class="col-12 col-lg-6 col-xl-3 border-light">
-                                <div class="card-body">
-                                    <h5 class="text-white mb-0"> {{ country.cum_confirmed | intcomma }} <span class="float-right"><i></i></span></h5>
-                                    <div class="progress my-3" style="height:3px;">
-                                        <div class="progress-bar" style="width:55%"></div>
-                                    </div>
-                                    <p class="mb-0 text-white small-font">Total cases <span class="float-right">+1.2%
-                                            <i class="zmdi zmdi-long-arrow-up"></i></span></p>
+                           <div class="col-12 col-lg-6 col-xl-3 border-light">
+                                <div class="card-body"> 
+                                    <p class="mb-0 text-white small-font" >Deaths in the last 24 hours  </p>
+                                    <h5 style="color:#f44900">{{ country.deaths | intcomma }} </h5>
                                 </div>
                             </div>
-                            <div class="col-12 col-lg-6 col-xl-3 border-light">
-                                <div class="card-body">
-                                    <h5 class="text-white mb-0">{{ country.cum_deaths | intcomma }}<span class="float-right"><i></i></span></h5>
-                                    <div class="progress my-3" style="height:3px;">
-                                        <div class="progress-bar" style="width:55%"></div>
-                                    </div>
-                                    <p class="mb-0 text-white small-font">Total deaths <span
-                                            class="float-right">+5.2% <i class="zmdi zmdi-long-arrow-up"></i></span></p>
+                           <div class="col-12 col-lg-6 col-xl-3 border-light">
+                                <div class="card-body"> 
+                                    <p class="mb-0 text-white small-font" style="color:#4EBF3F">Lives lost so far </p>
+                                    <h5 style="color:#4EBF3F">{{ country.cum_deaths | intcomma }} </h5>
                                 </div>
                             </div>
                         </div>
@@ -180,7 +183,7 @@
                 <div class="row">
                     <div class="col-12 col-lg-12">
                         <div class="card">
-                            <div class="card-header">Daily new cases</div>
+                            <div class="card-header" align="center" style="color:#efbb00">Daily new cases</div>
                             <div class="card-body">
                             <canvas id= "myChart"></canvas>
                             </div>
@@ -189,12 +192,168 @@
                                     let lineData=new Chart(newCases, {
                                     type:'line', //bar, line, horizontalBar, pip, doughnut, radar, polarArea
                                     data:{
-                                        labels:['Boston', 'Mohit', 'June', '', '', '', '', '', '', '', '', '', ''],
+                                        labels:[{% for a in day %}'{{ a }}',
+                                                {% endfor %}],
                                         datasets:[{
                                         label:'',
-                                        data:[
-                                        45, 4, 96, 200, 255, 300, 230, 350, 265, 245, 234, 287, 234, 435],
-                                        backgroundColor: 'rgba(255, 255, 255, 0.5)',
+                                        data:[{% for a in confirmed %}{{ a }}, 
+                                            {% endfor %}],
+                                        backgroundColor: 'rgba(191, 182, 63, 0.69)',
+                                        }]
+                                    },
+                                    options:{
+                                        maintainAspectRatio: true,
+                                        legend: {
+                                            display: false
+                                        },
+                                        scales:{
+                                            xAxes: [{
+                                                ticks: {
+                                                    fontColor: '#ddd'
+                                                },
+                                                gridlines: {
+                                                    color: "rgba(191, 63, 63, 0.69)"
+                                                },
+                                            }],
+                                            yAxes: [{
+                                                ticks: {
+                                                    fontColor: '#ddd'
+                                                },
+                                                gridlines: {
+                                                    color: "rgba(221, 221, 221, 0.08)"
+                                                },
+                                            }],
+
+                                        }
+                                    },
+                                    
+                                    });
+                                </script>       
+                        </div></div></div>
+
+                <div class="row">
+                    <div class="col-12 col-lg-12">
+                        <div class="card">
+                            <div class="card-header" align="center" style="color:#f44900;">Deaths</div>
+                            <div class="card-body">
+                            <canvas id= "myChart2"></canvas>
+                            </div>
+                                <script>
+                                    let newCases2 = document.getElementById('myChart2').getContext('2d');
+                                    let lineData2=new Chart(newCases2, {
+                                    type:'line', //bar, line, horizontalBar, pip, doughnut, radar, polarArea
+                                    data:{
+                                        labels:[{% for a in day %}'{{ a }}',
+                                                {% endfor %}],
+                                        datasets:[{
+                                        label:'',
+                                        data:[{% for a in deaths %}{{ a }}, 
+                                            {% endfor %}],
+                                        backgroundColor: 'rgba(244, 73, 0, 0.79)',
+                                        }]
+                                    },
+                                    options:{
+                                        maintainAspectRatio: true,
+                                        legend: {
+                                            display: false
+                                        },
+                                        scales:{
+                                            xAxes: [{
+                                                ticks: {
+                                                    fontColor: '#ddd'
+                                                },
+                                                gridlines: {
+                                                    color: "rgba(221, 221, 221, 0.08)"
+                                                },
+                                            }],
+                                            yAxes: [{
+                                                ticks: {
+                                                    fontColor: '#ddd'
+                                                },
+                                                gridlines: {
+                                                    color: "rgba(221, 221, 221, 0.08)"
+                                                },
+                                            }],
+
+                                        }
+                                    },
+                                    
+                                    });
+                                </script>       
+                        
+                        </div>
+                    </div></div>
+
+                <div class="row">
+                    <div class="col-12 col-lg-12">
+                        <div class="card">
+                            <div class="card-header" align="center" style="color:#efbb00">Total cases</div>
+                            <div class="card-body">
+                            <canvas id= "myChart3"></canvas>
+                            </div>
+                                <script>
+                                    let newCases3 = document.getElementById('myChart3').getContext('2d');
+                                    let lineData3=new Chart(newCases3, {
+                                    type:'line', //bar, line, horizontalBar, pip, doughnut, radar, polarArea
+                                    data:{
+                                        labels:[{% for a in day %}'{{ a }}',
+                                                {% endfor %}],
+                                        datasets:[{
+                                        label:'',
+                                        data:[{% for a in cum_confirmed %}{{ a }}, 
+                                            {% endfor %}],
+                                        backgroundColor: 'rgba(63, 78, 191, 0.89)',
+                                        }]
+                                    },
+                                    options:{
+                                        maintainAspectRatio: false,
+                                        legend: {
+                                            display: false
+                                        },
+                                        scales:{
+                                            xAxes: [{
+                                                ticks: {
+                                                    fontColor: '#ddd'
+                                                },
+                                                gridlines: {
+                                                    color: "rgba(191, 63, 63, 0.69)"
+                                                },
+                                            }],
+                                            yAxes: [{
+                                                ticks: {
+                                                    fontColor: '#ddd'
+                                                },
+                                                gridlines: {
+                                                    color: "rgba(221, 221, 221, 0.08)"
+                                                },
+                                            }],
+
+                                        }
+                                    },
+                                    
+                                    });
+                                </script>       
+                        </div></div></div>
+
+                <div class="row">
+                    <div class="col-12 col-lg-12">
+                        <div class="card">
+                            <div class="card-header" align="center" style="color:#77BF3F;">Total deaths</div>
+                            <div class="card-body">
+                            <canvas id= "myChart4"></canvas>
+                            </div>
+                                <script>
+                                    let newCases4 = document.getElementById('myChart4').getContext('2d');
+                                    let lineData4=new Chart(newCases4, {
+                                    type:'line', //bar, line, horizontalBar, pip, doughnut, radar, polarArea
+                                    data:{
+                                        labels:[{% for a in day %}'{{ a }}',
+                                                {% endfor %}],
+                                        datasets:[{
+                                        label:'',
+                                        data:[{% for a in cum_deaths %}{{ a }}, 
+                                            {% endfor %}],
+                                        backgroundColor: 'rgba(119, 191, 63, 0.9)',
                                         }]
                                     },
                                     options:{
@@ -225,167 +384,19 @@
                                     
                                     });
                                 </script>       
+                        
                         </div>
-
-
-
-                        <div class="card">
-                            <div class="card-header">Daily new cases</div>
-                            <div class="card-body">
-
-                            </div>
-                        </div>
-
-                    </div>
-                </div>
-                <!--End Row-->
-
-                <div class="row">
-                    <div class="col-12 col-lg-12">
-                        <div class="card">
-                            <div class="card-header">Countries with highest cases
-                                <!-- <div class="card-action">
-                                    <div class="dropdown">
-                                        <a href="javascript:void();" class="dropdown-toggle dropdown-toggle-nocaret"
-                                            data-toggle="dropdown">
-                                            <i class="icon-options"></i>
-                                        </a>
-                                        <div class="dropdown-menu dropdown-menu-right">
-                                            <a class="dropdown-item" href="javascript:void();">Action</a>
-                                            <a class="dropdown-item" href="javascript:void();">Another action</a>
-                                            <a class="dropdown-item" href="javascript:void();">Something else here</a>
-                                            <div class="dropdown-divider"></div>
-                                            <a class="dropdown-item" href="javascript:void();">Separated link</a>
-                                        </div>
-                                    </div>
-                                </div> -->
-                            </div>
-                            <div class="table-responsive">
-                                <table class="table align-items-center table-flush table-borderless">
-                                    <thead>
-                                        <tr>
-                                            <th></th>
-                                            <th></th>
-                                            <th>Active Cases</th>
-                                            <th>Deaths</th>
-                                            <th>Highest in a single day</th>
-                                            <th>% of global active cases</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <tr>
-                                            <td>Iphone 5</td>
-                                            <td><img src="https://via.placeholder.com/110x110" class="product-img"
-                                                    alt="product img"></td>
-                                            <td>#9405822</td>
-                                            <td>$ 1250.00</td>
-                                            <td>03 Aug 2017</td>
-                                            <td>
-                                                <div class="progress shadow" style="height: 3px;">
-                                                    <div class="progress-bar" role="progressbar" style="width: 90%">
-                                                    </div>
-                                                </div>
-                                            </td>
-                                        </tr>
-
-                                        <tr>
-                                            <td>Earphone GL</td>
-                                            <td><img src="https://via.placeholder.com/110x110" class="product-img"
-                                                    alt="product img"></td>
-                                            <td>#9405820</td>
-                                            <td>$ 1500.00</td>
-                                            <td>03 Aug 2017</td>
-                                            <td>
-                                                <div class="progress shadow" style="height: 3px;">
-                                                    <div class="progress-bar" role="progressbar" style="width: 60%">
-                                                    </div>
-                                                </div>
-                                            </td>
-                                        </tr>
-
-                                        <tr>
-                                            <td>HD Hand Camera</td>
-                                            <td><img src="https://via.placeholder.com/110x110" class="product-img"
-                                                    alt="product img"></td>
-                                            <td>#9405830</td>
-                                            <td>$ 1400.00</td>
-                                            <td>03 Aug 2017</td>
-                                            <td>
-                                                <div class="progress shadow" style="height: 3px;">
-                                                    <div class="progress-bar" role="progressbar" style="width: 70%">
-                                                    </div>
-                                                </div>
-                                            </td>
-                                        </tr>
-
-                                        <tr>
-                                            <td>Clasic Shoes</td>
-                                            <td><img src="https://via.placeholder.com/110x110" class="product-img"
-                                                    alt="product img"></td>
-                                            <td>#9405825</td>
-                                            <td>$ 1200.00</td>
-                                            <td>03 Aug 2017</td>
-                                            <td>
-                                                <div class="progress shadow" style="height: 3px;">
-                                                    <div class="progress-bar" role="progressbar" style="width: 100%">
-                                                    </div>
-                                                </div>
-                                            </td>
-                                        </tr>
-
-                                        <tr>
-                                            <td>Hand Watch</td>
-                                            <td><img src="https://via.placeholder.com/110x110" class="product-img"
-                                                    alt="product img"></td>
-                                            <td>#9405840</td>
-                                            <td>$ 1800.00</td>
-                                            <td>03 Aug 2017</td>
-                                            <td>
-                                                <div class="progress shadow" style="height: 3px;">
-                                                    <div class="progress-bar" role="progressbar" style="width: 40%">
-                                                    </div>
-                                                </div>
-                                            </td>
-                                        </tr>
-
-                                        <tr>
-                                            <td>Clasic Shoes</td>
-                                            <td><img src="https://via.placeholder.com/110x110" class="product-img"
-                                                    alt="product img"></td>
-                                            <td>#9405825</td>
-                                            <td>$ 1200.00</td>
-                                            <td>03 Aug 2017</td>
-                                            <td>
-                                                <div class="progress shadow" style="height: 3px;">
-                                                    <div class="progress-bar" role="progressbar" style="width: 100%">
-                                                    </div>
-                                                </div>
-                                            </td>
-                                        </tr>
-
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                    </div></div>
                 <!--End Row-->
 
                 <!--End Dashboard Content-->
-
-                <!--start overlay-->
-                <div class="overlay toggle-menu"></div>
-                <!--end overlay-->
 
             </div>
             <!-- End container-fluid-->
 
         </div>
         <!--End content-wrapper-->
-        <!--Start Back To Top Button-->
-        <a href="javaScript:void();" class="back-to-top"><i class="fa fa-angle-double-up"></i> </a>
-        <!--End Back To Top Button-->
-
+        
         <!--Start footer-->
         <footer class="footer">
             <div class="container">
