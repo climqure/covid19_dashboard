@@ -17,6 +17,17 @@ class Info(models.Model):
         return self.country
 
 
+class world(models.Model):
+    day = models.DateField()
+    deaths = models.IntegerField()
+    cum_deaths = models.IntegerField()
+    confirmed = models.IntegerField()
+    cum_confirmed = models.IntegerField()
+
+    def __str__(self):
+        return str(self.day)
+
+
 class active_countrie(models.Model):
     country_abr = models.CharField(max_length=10)
     country = models.CharField(max_length=70)

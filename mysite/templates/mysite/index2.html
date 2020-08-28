@@ -241,7 +241,7 @@ function myFunction() {
                                 <script>
                                     let newCases2 = document.getElementById('myChart2').getContext('2d');
                                     let lineData2=new Chart(newCases2, {
-                                    type:'line', //bar, line, horizontalBar, pip, doughnut, radar, polarArea
+                                    type:'bar', //bar, line, horizontalBar, pip, doughnut, radar, polarArea
                                     data:{
                                         labels:[{% for a in day %}'{{ a }}',
                                                 {% endfor %}],

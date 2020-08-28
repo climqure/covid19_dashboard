@@ -7,3 +7,4 @@ from .models import *
 admin.site.register(Info)
 admin.site.register(active_countrie)
 admin.site.register(all_countrie)
+admin.site.register(world)
